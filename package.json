@@ -1,0 +1,22 @@
+{
+  "name": "blastwheelz-nft-smart-contract",
+  "version": "1.0.0",
+  "description": "BlastWheelz NFT Smart Contract",
+  "scripts": {
+    "create-supply": "ts-node scripts/create-supply.ts",
+    "mint": "ts-node scripts/mint.ts",
+    "setup-display": "ts-node scripts/setup-display.ts",
+    "update-display": "ts-node scripts/update-display.ts",
+    "update-nft-display": "ts-node scripts/update-nft-display.ts"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.0.0",
+    "dotenv": "^16.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}
