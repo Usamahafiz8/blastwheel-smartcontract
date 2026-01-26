@@ -21,7 +21,7 @@
  */
 
 import { config } from 'dotenv';
-import { SuiClient, SuiObjectChangeCreated } from '@mysten/sui/client';
+import { SuiClient, SuiObjectChangeCreated, getFullnodeUrl } from '@mysten/sui/client';
 import { bcs } from '@mysten/sui/bcs';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { Transaction } from '@mysten/sui/transactions';
@@ -31,6 +31,8 @@ import * as path from 'path';
 // Load environment variables
 config({ path: path.join(__dirname, '../.env.local') });
 config({ path: path.join(__dirname, '../.env') });
+
+// ... existing code ...
 
 // All 32 car types
 const CAR_TYPES = [
@@ -70,36 +72,41 @@ const CAR_TYPES = [
 
 const packageId = process.env.PACKAGE_ID || process.env.NFT_PACKAGE_ID;
 const publisherId = process.env.PUBLISHER_ID || '';
-const suiNetwork = process.env.SUI_NETWORK || 'https://fullnode.mainnet.sui.io:443';
+let suiNetwork = process.env.SUI_NETWORK || 'https://fullnode.mainnet.sui.io:443';
+
+// Resolve network URL if it's a name
+if (suiNetwork === 'testnet' || suiNetwork === 'mainnet' || suiNetwork === 'devnet' || suiNetwork === 'localnet') {
+  suiNetwork = getFullnodeUrl(suiNetwork as any);
+}
+
 const privateKey = process.env.PRIVATE_KEY || process.env.ADMIN_PRIVATE_KEY || '';
 const mnemonic = process.env.MNEMONIC || process.env.ADMIN_MNEMONIC || '';
 const GAS_BUDGET = 60_000_000; // 0.06 SUI
 
-// Display fields template - uses {mint_number} placeholder for dynamic values
-const DISPLAY_FIELDS = {
-  keys: [
-    'name',
-    'image_url',
-    'description',
-    'project_url',
-    'creator',
-    'intellectual_property',
-    'category',
-    'type',
-    'mint_number',
-  ],
-  values: [
-    'BlastWheelz Car #{mint_number}',
-    'https://blastwheelz.io/car.png',
-    'BlastWheelz NFT Car Collection',
-    'https://blastwheelz.io',
-    'BlastWheelz',
-    'BlastWheelz',
-    'Collectible',
-    'Car',
-    '{mint_number}',
-  ],
-};
+/**
+ * Get display fields for a specific car type
+ * Uses {mint_number} placeholder for dynamic values
+ */
+function getDisplayFields(carType: string) {
+  return {
+    keys: [
+      'name',
+      'description',
+      'image_url',
+      'project_url',
+      'Rims',
+      'paint',
+    ],
+    values: [
+      carType,
+      `A powerful ${carType} racing car from Blast Wheels`,
+      `https://blast-wheels.com/${carType.toLowerCase()}.png`,
+      'https://blast-wheels.com/',
+      '{Rims}',
+      '{paint}',
+    ],
+  };
+}
 
 /**
  * Get keypair from private key or mnemonic
@@ -175,13 +182,16 @@ async function createDisplayForCarType(carType: string): Promise<string> {
   console.log(`📋 Creating display for: ${carType}`);
   console.log(`📦 NFT Type: ${NFT_TYPE}\n`);
   
+  // Get display fields for this car type
+  const displayFields = getDisplayFields(carType);
+  
   // Create display with fields
   const carDisplay = tx.moveCall({
     target: '0x2::display::new_with_fields',
     arguments: [
       tx.object(publisherId),
-      tx.pure(bcs.vector(bcs.string()).serialize(DISPLAY_FIELDS.keys)),
-      tx.pure(bcs.vector(bcs.string()).serialize(DISPLAY_FIELDS.values)),
+      tx.pure(bcs.vector(bcs.string()).serialize(displayFields.keys)),
+      tx.pure(bcs.vector(bcs.string()).serialize(displayFields.values)),
     ],
     typeArguments: [NFT_TYPE],
   });

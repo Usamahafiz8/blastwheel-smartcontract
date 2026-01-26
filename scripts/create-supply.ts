@@ -35,7 +35,7 @@ const CAR_TYPES = [
 
 const packageId = process.env.PACKAGE_ID;
 const adminCapId = process.env.ADMIN_CAP_ID;
-const suiNetwork = process.env.SUI_NETWORK || 'https://fullnode.mainnet.sui.io:443';
+const suiNetwork = process.env.SUI_NETWORK || 'https://fullnode.testnet.sui.io:443';
 const privateKey = process.env.PRIVATE_KEY || '';
 const mnemonic = process.env.MNEMONIC || '';
 
@@ -129,6 +129,26 @@ async function createSupply(carType: string, maxSupply: number): Promise<void> {
   console.log(`💾 Supply ID saved to: ${outputFile}\n`);
   console.log(`📝 Add to your .env file:`);
   console.log(`SUPPLY_${carType.toUpperCase()}=${supply.objectId}\n`);
+
+  // Create Display for this car type
+  console.log('🎨 Creating Display Metadata...');
+  try {
+    const { execSync } = require('child_process');
+    const setupDisplayScript = path.join(__dirname, 'setup-display.ts');
+    // Use the same environment variables
+    const env = { ...process.env };
+    
+    console.log(`> npx tsx ${setupDisplayScript} ${carType}`);
+    execSync(`npx tsx ${setupDisplayScript} ${carType}`, { 
+      stdio: 'inherit',
+      env: env
+    });
+    console.log('✅ Display created successfully!\n');
+  } catch (error) {
+    console.error('❌ Failed to create display:', error);
+    console.log('⚠️  You can try running it manually:');
+    console.log(`   npx tsx scripts/setup-display.ts ${carType}\n`);
+  }
 }
 
 async function main() {
