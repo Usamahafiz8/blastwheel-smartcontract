@@ -2,29 +2,7 @@
 # This file should be checked in.
 
 [move]
-version = 3
-manifest_digest = "DD8FA2A3F7204832ECD345510C46E2BF2EB205EC5E4B73C5757A33EB8530E939"
-deps_digest = "F9B494B64F0615AED0E98FC12A85B85ECD2BC5185C22D30E7F67786BB52E507C"
-dependencies = [
-  { id = "Bridge", name = "Bridge" },
-  { id = "MoveStdlib", name = "MoveStdlib" },
-  { id = "Sui", name = "Sui" },
-  { id = "SuiSystem", name = "SuiSystem" },
-]
-
-[[move.package]]
-id = "Bridge"
-source = { git = "https://github.com/MystenLabs/sui.git", rev = "d75fae3aa7fa3545b5803980a1e0c965b8bbf48e", subdir = "crates/sui-framework/packages/bridge" }
-
-dependencies = [
-  { id = "MoveStdlib", name = "MoveStdlib" },
-  { id = "Sui", name = "Sui" },
-  { id = "SuiSystem", name = "SuiSystem" },
-]
-
-[[move.package]]
-id = "MoveStdlib"
-source = { git = "https://github.com/MystenLabs/sui.git", rev = "d75fae3aa7fa3545b5803980a1e0c965b8bbf48e", subdir = "crates/sui-framework/packages/move-stdlib" }
+version = 4
 
 [pinned.testnet.MoveStdlib]
 source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/move-stdlib", rev = "563c15820b27dec9cbe75f826a3b6243ef44da1a" }
@@ -32,44 +10,14 @@ use_environment = "testnet"
 manifest_digest = "C4FE4C91DE74CBF223B2E380AE40F592177D21870DC2D7EB6227D2D694E05363"
 deps = {}
 
-[[move.package]]
-id = "Sui"
-source = { git = "https://github.com/MystenLabs/sui.git", rev = "d75fae3aa7fa3545b5803980a1e0c965b8bbf48e", subdir = "crates/sui-framework/packages/sui-framework" }
-
-dependencies = [
-  { id = "MoveStdlib", name = "MoveStdlib" },
-]
-
 [pinned.testnet.Sui]
 source = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "563c15820b27dec9cbe75f826a3b6243ef44da1a" }
 use_environment = "testnet"
 manifest_digest = "7AFB66695545775FBFBB2D3078ADFD084244D5002392E837FDE21D9EA1C6D01C"
 deps = { MoveStdlib = "MoveStdlib" }
 
-[[move.package]]
-id = "SuiSystem"
-source = { git = "https://github.com/MystenLabs/sui.git", rev = "d75fae3aa7fa3545b5803980a1e0c965b8bbf48e", subdir = "crates/sui-framework/packages/sui-system" }
-
-dependencies = [
-  { id = "MoveStdlib", name = "MoveStdlib" },
-  { id = "Sui", name = "Sui" },
-]
-
-[move.toolchain-version]
-compiler-version = "1.60.0"
-edition = "2024.beta"
-flavor = "sui"
-
 [pinned.testnet.blastwheelz_nft_smart_contract]
 source = { root = true }
 use_environment = "testnet"
 manifest_digest = "5745706258F61D6CE210904B3E6AE87A73CE9D31A6F93BE4718C442529332A87"
 deps = { std = "MoveStdlib", sui = "Sui" }
-
-[env]
-
-[env.testnet]
-chain-id = "4c78adac"
-original-published-id = "0x8091470a315d889c7c645c21f2ef5b482ad58840a62a9c3d148cd8f0b7ccb77f"
-latest-published-id = "0x8091470a315d889c7c645c21f2ef5b482ad58840a62a9c3d148cd8f0b7ccb77f"
-published-version = "1"
